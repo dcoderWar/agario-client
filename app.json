@@ -1,0 +1,15 @@
+{
+  "name": "agario-helper",
+  "description": "agar.io suicide bot implementation",
+  "repository": "https://github.com/dcoderWar/agario-helper.git",
+  "logo": "http://agar.io/favicon-32x32.png",
+  "keywords": [
+    "agar.io",
+    "heroku",
+    "express",
+    "node",
+    "bot",
+    "helper"
+  ],
+  "image": "heroku/nodejs"
+}
