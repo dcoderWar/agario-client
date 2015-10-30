@@ -372,7 +372,7 @@ function getMaster(cell, master) {
     // If the bot is in slave mode and the cell's name matches our player name
     // Hmmm.... Kinda an issue, seeing how anyone could use your name!!!! For now use something unique!
     // @TODO are cell IDs consistent enough to use? i.e. if (cell.id === bot.masterID)
-    if (this.isSlave && cell.name === player.name) {
+    if (this.isSlave && cell.id === this.masterID) {
         if (isThreat(cell, player)) {
             dist = computeDistanceFromCircleEdge(cell.x, cell.y, player.x, player.y, cell.size);
 
