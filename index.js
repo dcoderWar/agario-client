@@ -10,6 +10,7 @@ const appData      = require('./package.json');
 const AgarioHelper = require('./agar.io/helper');
 
 const app = express(), port = parseInt(process.env.PORT || 5000);
+app.set('port', port);
 
 const helper = new AgarioHelper({
     secretKey: 'BSEdggs26^6%25kOl7Oj',
@@ -23,15 +24,20 @@ const helper = new AgarioHelper({
 
 app.use(favicon(__dirname + '/public/favicon-32x32.png'));
 
-app.set('port', port);
+app.use(express.static(__dirname + '/public'));
+
+const header = '<!DOCTYPE html><html lang="en-US"><head>' +
+    '<link rel="stylesheet" type="text/css" href="style.css"></head><body>';
+const footer = '</body></html>';
 
 app.get('/', (request, response) => {
     appData.upTime = upTime();
     appData.lastJoin = new Date(helper.lastJoin);
     appData.port = app.get('port');
     appData.altVersion = helper.toString();
-    response.send(tableify(appData));
+    response.send(header + tableify(appData) + footer);
 });
+
 
 //noinspection JSUnresolvedFunction
 app.use(helper.middleware());
