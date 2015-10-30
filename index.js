@@ -8,7 +8,7 @@ const AgarioHelper = require('./agar.io/helper');
 const app = express(), port = parseInt(process.env.PORT || 5000);
 
 const helper = new AgarioHelper({
-    secretKey: 'BSEdggs26^6%25kOl7Oj',
+    secretKey: '8*IS3APUcEkn',
     clones: [
         'agario-client0.herokuapp.com',
         'agario-client1.herokuapp.com',
