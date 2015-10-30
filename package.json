@@ -19,7 +19,9 @@
     "url": "https://github.com/dcoderWar/agario-helper.git"
   },
   "devDependencies": {
-    "pretty-error": "^1.2.0"
+    "pretty-error": "^1.2.0",
+    "node-hooks": "0.0.15",
+    "esprima.hks": "0.0.0"
   },
   "files": [
     "agar.io/helper.js",
