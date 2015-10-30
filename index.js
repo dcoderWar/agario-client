@@ -27,7 +27,7 @@ app.get('/', (request, response) => {
     appData.upTime = upTime();
     appData.lastJoin = new Date(helper.lastJoin);
     appData.port = app.get('port');
-    appData.altVersion = helper.toString();
+    appData.botVersion = helper.toString();
     appData.region = helper.session.region;
     appData.server = helper.server;
     appData.key = helper.key;
@@ -38,6 +38,7 @@ app.get('/', (request, response) => {
     appData.cors = helper.cors;
     appData.leaders = helper.session.leaders;
     appData.nickName = helper.session.name;
+    appData.masterID = helper.bot.masterID;
     appData.x = helper.session.x;
     appData.y = helper.session.y;
 
