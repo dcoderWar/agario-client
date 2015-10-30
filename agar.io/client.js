@@ -1,48 +1,48 @@
-var WebSocket    = require('ws');
-var Packet       = require('./packet.js');
+var WebSocket = require('ws');
+var Packet = require('./packet.js');
 var EventEmitter = require('events').EventEmitter;
 
-Client.Ball    = Ball;
+Client.Ball = Ball;
 module.exports = Client;
 
 function Client(clientName) {
     //you can change this values
-    this.clientName      = clientName; //name used for log
-    this.debug            = 1;           //debug level, 0-5 (5 will output extremely lot of data)
-    this.inactive_destroy = 5*60*1000;   //time in ms when to destroy inactive cells
-    this.inactive_check   = 10*1000;     //time in ms when to search inactive cells
-    this.spawn_interval   = 200;	 //time in ms for respawn interval. 0 to disable (if your custom server don't have spawn problems)
-    this.spawn_attempts   = 25;		 //how much attempts to spawn before give up (official servers do have unstable spawn problems)
+    this.clientName = clientName; //name used for log
+    this.debug = 1;           //debug level, 0-5 (5 will output extremely lot of data)
+    this.inactive_destroy = 5 * 60 * 1000;   //time in ms when to destroy inactive cells
+    this.inactive_check = 10 * 1000;     //time in ms when to search inactive cells
+    this.spawn_interval = 200;	 //time in ms for respawn interval. 0 to disable (if your custom server don't have spawn problems)
+    this.spawn_attempts = 25;		 //how much attempts to spawn before give up (official servers do have unstable spawn problems)
 
     //don't change things below if you don't understand what you're doing
 
-    this.tick_counter      = 0;    //number of ticks (packet ID 16 counter)
+    this.tick_counter = 0;    //number of ticks (packet ID 16 counter)
     this.inactive_interval = 0;    //ID of setInterval()
-    this.cells             = {};   //all cells
-    this.playerIDs          = [];   //IDs of my cells
-    this.score             = 0;    //my score
-    this.leaders           = [];   //IDs of leaders in FFA mode
-    this.teams_scores      = [];   //scores of teams in Teams mode
-    this.facebook_key      = '';   //facebook key. Check README.md how to get it
-    this.spawn_attempt     = 0;    //attempt to spawn
+    this.cells = {};   //all cells
+    this.playerIDs = [];   //IDs of my cells
+    this.score = 0;    //my score
+    this.leaders = [];   //IDs of leaders in FFA mode
+    this.teams_scores = [];   //scores of teams in Teams mode
+    this.facebook_key = '';   //facebook key. Check README.md how to get it
+    this.spawn_attempt = 0;    //attempt to spawn
     this.spawn_interval_id = 0;    //ID of setInterval()
 }
 
 Client.prototype = {
-    connect: function(server, key) {
+    connect: function (server, key) {
         var headers = {
             'Origin': 'http://agar.io'
         };
 
-        this.webSocket            = new WebSocket(server, null, {headers: headers});
+        this.webSocket = new WebSocket(server, null, {headers: headers});
         this.webSocket.binaryType = "arraybuffer";
-        this.webSocket.onopen     = this.onConnect.bind(this);
-        this.webSocket.onmessage  = this.onMessage.bind(this);
-        this.webSocket.onclose    = this.onDisconnect.bind(this);
-        this.webSocket.onerror    = this.onError.bind(this);
-        this.server        = server;
+        this.webSocket.onopen = this.onConnect.bind(this);
+        this.webSocket.onmessage = this.onMessage.bind(this);
+        this.webSocket.onclose = this.onDisconnect.bind(this);
+        this.webSocket.onerror = this.onError.bind(this);
+        this.server = server;
         console.log(server, key);
-        this.key           = key;
+        this.key = key;
 
         if (this.debug >= 1) {
             if (!key) this.log('[warning] You did not specified "key" for Client.connect(server, key)\n' +
@@ -53,14 +53,14 @@ Client.prototype = {
         this.emit('connecting');
     },
 
-    disconnect: function() {
+    disconnect: function () {
         if (this.debug >= 1)
             this.log('disconnect() called');
 
         this.webSocket.close();
     },
 
-    onConnect: function() {
+    onConnect: function () {
         var client = this;
 
         if (this.debug >= 1)
@@ -81,16 +81,16 @@ Client.prototype = {
         if (this.key) {
             buf = new Buffer(1 + this.key.length);
             buf.writeUInt8(80, 0);
-            for (var i=1;i<=this.key.length;++i) {
-                buf.writeUInt8(this.key.charCodeAt(i-1), i);
+            for (var i = 1; i <= this.key.length; ++i) {
+                buf.writeUInt8(this.key.charCodeAt(i - 1), i);
             }
             this.send(buf);
         }
         if (this.facebook_key) {
             buf = new Buffer(1 + this.facebook_key.length);
             buf.writeUInt8(81, 0);
-            for (i=1;i<=this.facebook_key.length;++i) {
-                buf.writeUInt8(this.facebook_key.charCodeAt(i-1), i);
+            for (i = 1; i <= this.facebook_key.length; ++i) {
+                buf.writeUInt8(this.facebook_key.charCodeAt(i - 1), i);
             }
             this.send(buf);
         }
@@ -100,7 +100,7 @@ Client.prototype = {
         client.emit('connected');
     },
 
-    onError: function(e) {
+    onError: function (e) {
         if (this.debug >= 1)
             this.log('connection error: ' + e);
 
@@ -108,7 +108,7 @@ Client.prototype = {
         this.reset('connection-error');
     },
 
-    onDisconnect: function() {
+    onDisconnect: function () {
         if (this.debug >= 1)
             this.log('disconnected');
 
@@ -116,8 +116,8 @@ Client.prototype = {
         this.reset('disconnect');
     },
 
-    onMessage: function(e) {
-        var packet    = new Packet(e);
+    onMessage: function (e) {
+        var packet = new Packet(e);
         var packet_id = packet.readUInt8();
         var processor = this.processors[packet_id];
         if (!processor) return this.log('[warning] unknown packet ID(' + packet_id + '): ' + packet.toString());
@@ -131,7 +131,7 @@ Client.prototype = {
         processor(this, packet);
     },
 
-    send: function(buf) {
+    send: function (buf) {
         if (this.debug >= 4)
             this.log('SEND packet ID=' + buf.readUInt8(0) + ' LEN=' + buf.length);
 
@@ -141,29 +141,29 @@ Client.prototype = {
         this.webSocket.send(buf);
     },
 
-    reset: function(reason) {
+    reset: function (reason) {
         if (this.debug >= 3)
             this.log('reset(' + reason + ')');
 
         clearInterval(this.inactive_interval);
         clearInterval(this.spawn_interval_id);
         this.spawn_interval_id = 0;
-        this.leaders           = [];
-        this.teams_scores      = [];
-        this.playerIDs          = [];
-        this.spawn_attempt     = 0;
+        this.leaders = [];
+        this.teams_scores = [];
+        this.playerIDs = [];
+        this.spawn_attempt = 0;
 
-        for(var k in this.cells) if (this.cells.hasOwnProperty(k)) this.cells[k].destroy('reset');
+        for (var k in this.cells) if (this.cells.hasOwnProperty(k)) this.cells[k].destroy('reset');
         this.emit('reset', reason);
     },
 
-    destroyInactive: function() {
+    destroyInactive: function () {
         var time = Date.now();
 
         if (this.debug >= 3)
             this.log('destroying inactive cells');
 
-        for(var k in this.cells) {
+        for (var k in this.cells) {
             if (!this.cells.hasOwnProperty(k)) continue;
             var cell = this.cells[k];
             if (time - cell.last_update < this.inactive_destroy) continue;
@@ -178,13 +178,13 @@ Client.prototype = {
 
     processors: {
         //tick
-        '16': function(client, packet) {
+        '16': function (client, packet) {
             var eaters_count = packet.readUInt16LE();
 
             client.tick_counter++;
 
             //reading eat events
-            for(var i=0;i<eaters_count;i++) {
+            for (var i = 0; i < eaters_count; i++) {
                 var eater_id = packet.readUInt32LE();
                 var eaten_id = packet.readUInt32LE();
 
@@ -204,7 +204,7 @@ Client.prototype = {
 
 
             //reading actions of cells
-            while(1) {
+            while (1) {
                 var is_virus = false;
                 var cell_id;
                 var coordinate_x;
@@ -228,20 +228,24 @@ Client.prototype = {
 
                 var opt = packet.readUInt8();
                 is_virus = !!(opt & 1);
+                var something_1 = !!(opt & 16); //todo what is this?
 
                 //reserved for future use?
                 if (opt & 2) {
-                    packet.offset += 4;
+                    packet.offset += packet.readUInt32LE();
                 }
                 if (opt & 4) {
-                    packet.offset += 8;
-                }
-                if (opt & 8) {
-                    packet.offset += 16;
+                    var something_2 = ''; //todo something related to premium skins
+                    while (1) {
+                        var char = packet.readUInt8();
+                        if (char == 0) break;
+                        if (!something_2) something_2 = '';
+                        something_2 += String.fromCharCode(char);
+                    }
                 }
 
-                while(1) {
-                    var char = packet.readUInt16LE();
+                while (1) {
+                    char = packet.readUInt16LE();
                     if (char == 0) break;
                     if (!nick) nick = '';
                     nick += String.fromCharCode(char);
@@ -266,7 +270,7 @@ Client.prototype = {
             var cells_on_screen_count = packet.readUInt32LE();
 
             //disappear events
-            for(i=0;i<cells_on_screen_count;i++) {
+            for (i = 0; i < cells_on_screen_count; i++) {
                 cell_id = packet.readUInt32LE();
 
                 cell = client.cells[cell_id] || new Ball(client, cell_id);
@@ -275,16 +279,16 @@ Client.prototype = {
                 if (cell.mine) {
                     cell.destroy('merge', cell.id);
                     client.emit('merge', cell.id);
-                }else{
+                } else {
                     cell.disappear();
                 }
             }
         },
 
         //update spectating coordinates in "spectate" mode
-        '17': function(client, packet) {
-            var x    = packet.readFloat32LE();
-            var y    = packet.readFloat32LE();
+        '17': function (client, packet) {
+            var x = packet.readFloat32LE();
+            var y = packet.readFloat32LE();
             var zoom = packet.readFloat32LE();
 
             if (client.debug >= 4)
@@ -293,16 +297,16 @@ Client.prototype = {
             client.emit('spectateFieldUpdate', x, y, zoom);
         },
 
-        '20': function() {
+        '20': function () {
             //i dont know what this is
             //in original code it clears our cells array, but i never saw this packet
         },
 
         //new ID of your cell (when you join or press space)
-        '32': function(client, packet) {
+        '32': function (client, packet) {
             var cell_id = packet.readUInt32LE();
-            var cell    = client.cells[cell_id] || new Ball(client, cell_id);
-            cell.mine   = true;
+            var cell = client.cells[cell_id] || new Ball(client, cell_id);
+            cell.mine = true;
             if (!client.playerIDs.length) client.score = 0;
             client.playerIDs.push(cell_id);
 
@@ -321,15 +325,15 @@ Client.prototype = {
         },
 
         //leaderboard update in FFA mode
-        '49': function(client, packet) {
+        '49': function (client, packet) {
             var users = [];
             var count = packet.readUInt32LE();
 
-            for(var i=0;i<count;i++) {
+            for (var i = 0; i < count; i++) {
                 var id = packet.readUInt32LE();
 
                 var name = '';
-                while(1) {
+                while (1) {
                     var char = packet.readUInt16LE();
                     if (char == 0) break;
                     name += String.fromCharCode(char);
@@ -343,7 +347,7 @@ Client.prototype = {
 
             if (JSON.stringify(client.leaders) == JSON.stringify(users)) return;
             var old_leaders = client.leaders;
-            client.leaders  = users;
+            client.leaders = users;
 
             if (client.debug >= 2)
                 client.log('leaders update: ' + JSON.stringify(users));
@@ -352,11 +356,11 @@ Client.prototype = {
         },
 
         //teams scored update in teams mode
-        '50': function(client, packet) {
-            var teams_count  = packet.readUInt32LE();
+        '50': function (client, packet) {
+            var teams_count = packet.readUInt32LE();
             var teams_scores = [];
 
-            for (var i=0;i<teams_count;++i) {
+            for (var i = 0; i < teams_count; ++i) {
                 teams_scores.push(packet.readFloat32LE());
             }
 
@@ -372,7 +376,7 @@ Client.prototype = {
         },
 
         //map size load
-        '64': function(client, packet) {
+        '64': function (client, packet) {
             var min_x = packet.readFloat64LE();
             var min_y = packet.readFloat64LE();
             var max_x = packet.readFloat64LE();
@@ -385,14 +389,14 @@ Client.prototype = {
         },
 
         //another unknown backet
-        '72': function() {
+        '72': function () {
             //packet is sent by server but not used in original code
         },
 
-        '81': function(client, packet) {
-            var level       = packet.readUInt32LE();
+        '81': function (client, packet) {
+            var level = packet.readUInt32LE();
             var curernt_exp = packet.readUInt32LE();
-            var need_exp    = packet.readUInt32LE();
+            var need_exp = packet.readUInt32LE();
 
             if (client.debug >= 2)
                 client.log('experience update: ' + [level, curernt_exp, need_exp].join(','));
@@ -400,7 +404,7 @@ Client.prototype = {
             client.emit('experience-update', level, curernt_exp, need_exp);
         },
 
-        '240': function(client, packet) {
+        '240': function (client, packet) {
             packet.offset += 4;
             var packet_id = packet.readUInt8();
             var processor = client.processors[packet_id];
@@ -409,7 +413,7 @@ Client.prototype = {
         },
 
         //somebody won, end of the game (server restart)
-        '254': function(client) {
+        '254': function (client) {
             if (client.debug >= 1)
                 client.log(client.cells[client.leaders[0]] + ' WON THE GAME! Server going for restart');
 
@@ -417,11 +421,11 @@ Client.prototype = {
         }
     },
 
-    updateScore: function() {
+    updateScore: function () {
         var potential_score = 0;
-        for (var i=0;i<this.playerIDs.length;i++) {
+        for (var i = 0; i < this.playerIDs.length; i++) {
             var cell_id = this.playerIDs[i];
-            var cell    = this.cells[cell_id];
+            var cell = this.cells[cell_id];
             potential_score += Math.pow(cell.size, 2);
         }
         var old_score = this.score;
@@ -436,14 +440,14 @@ Client.prototype = {
 
     },
 
-    log: function(msg) {
+    log: function (msg) {
         console.log(this.clientName + ': ' + msg);
     },
 
     //functions that you can call to control your cells
 
     //spawn cell
-    spawn: function(name) {
+    spawn: function (name) {
         if (this.debug >= 3)
             this.log('spawn() called, name=' + name);
 
@@ -453,10 +457,10 @@ Client.prototype = {
             return false;
         }
 
-        var buf = new Buffer(1 + 2*name.length);
+        var buf = new Buffer(1 + 2 * name.length);
         buf.writeUInt8(0, 0);
-        for (var i=0;i<name.length;i++) {
-            buf.writeUInt16LE(name.charCodeAt(i), 1 + i*2);
+        for (var i = 0; i < name.length; i++) {
+            buf.writeUInt16LE(name.charCodeAt(i), 1 + i * 2);
         }
         this.send(buf);
 
@@ -467,7 +471,7 @@ Client.prototype = {
 
             var that = this;
             this.spawn_attempt = 1;
-            this.spawn_interval_id = setInterval(function() {
+            this.spawn_interval_id = setInterval(function () {
                 if (that.debug >= 4)
                     that.log('spawn() interval tick, attempt ' + that.spawn_attempt + '/' + that.spawn_attempts);
 
@@ -489,7 +493,7 @@ Client.prototype = {
     },
 
     //activate spectate mode
-    spectate: function() {
+    spectate: function () {
         if (this.webSocket.readyState !== WebSocket.OPEN) {
             if (this.debug >= 1)
                 this.log('[warning] spectate() was called when connection was not established, packet will be dropped');
@@ -503,7 +507,7 @@ Client.prototype = {
     },
 
     //switch spectate mode (toggle between free look view and leader view)
-    spectateModeToggle: function() {
+    spectateModeToggle: function () {
         if (this.webSocket.readyState !== WebSocket.OPEN) {
             if (this.debug >= 1)
                 this.log('[warning] spectateModeToggle() was called when connection was not established, packet will be dropped');
@@ -518,7 +522,7 @@ Client.prototype = {
         return true;
     },
 
-    moveTo: function(x, y) {
+    moveTo: function (x, y) {
         if (this.webSocket.readyState !== WebSocket.OPEN) {
             if (this.debug >= 1)
                 this.log('[warning] moveTo() was called before connection established, packet will be dropped');
@@ -536,7 +540,7 @@ Client.prototype = {
 
     //split your cells
     //they will split in direction that you have set with moveTo()
-    split: function() {
+    split: function () {
         if (this.webSocket.readyState !== WebSocket.OPEN) {
             if (this.debug >= 1)
                 this.log('[warning] split() was called when connection was not established, packet will be dropped');
@@ -550,7 +554,7 @@ Client.prototype = {
 
     //eject some mass
     //mass will eject in direction that you have set with moveTo()
-    eject: function() {
+    eject: function () {
         if (this.webSocket.readyState !== WebSocket.OPEN) {
             if (this.debug >= 1)
                 this.log('[warning] eject() was called when connection was not established, packet will be dropped');
@@ -566,18 +570,18 @@ Client.prototype = {
 function Ball(client, id) {
     if (client.cells[id]) return client.cells[id];
 
-    this.id    = id;
-    this.name  = null;
-    this.x     = 0;
-    this.y     = 0;
-    this.size  = 0;
-    this.mass  = 0;
+    this.id = id;
+    this.name = null;
+    this.x = 0;
+    this.y = 0;
+    this.size = 0;
+    this.mass = 0;
     this.virus = false;
-    this.mine  = false;
+    this.mine = false;
 
-    this.client      = client;
-    this.destroyed   = false;
-    this.visible     = false;
+    this.client = client;
+    this.destroyed = false;
+    this.visible = false;
     this.last_update = Date.now();
     this.update_tick = 0;
 
@@ -585,7 +589,7 @@ function Ball(client, id) {
     return this;
 }
 Ball.prototype = {
-    destroy: function(reason) {
+    destroy: function (reason) {
         this.destroyed = reason;
         delete this.client.cells[this.id];
         var mine_cell_index = this.client.playerIDs.indexOf(this.id);
@@ -599,23 +603,23 @@ Ball.prototype = {
         this.client.emit('cell-destroy', this.id, reason);
     },
 
-    setCords: function(new_x, new_y) {
+    setCords: function (new_x, new_y) {
         if (this.x == new_x && this.y == new_y) return;
         var old_x = this.x;
         var old_y = this.y;
-        this.x    = new_x;
-        this.y    = new_y;
+        this.x = new_x;
+        this.y = new_y;
 
         if (!old_x && !old_y) return;
         this.emit('move', old_x, old_y, new_x, new_y);
         this.client.emit('cell-move', this.id, old_x, old_y, new_x, new_y);
     },
 
-    setSize: function(new_size) {
+    setSize: function (new_size) {
         if (this.size == new_size) return;
         var old_size = this.size;
-        this.size    = new_size;
-        this.mass    = parseInt(Math.pow(new_size/10, 2));
+        this.size = new_size;
+        this.mass = parseInt(Math.pow(new_size / 10, 2));
 
         if (!old_size) return;
         this.emit('resize', old_size, new_size);
@@ -623,24 +627,24 @@ Ball.prototype = {
         if (this.mine) this.client.updateScore();
     },
 
-    setName: function(name) {
+    setName: function (name) {
         if (this.name == name) return;
         var old_name = this.name;
-        this.name    = name;
+        this.name = name;
 
         this.emit('rename', old_name, name);
         this.client.emit('cell-rename', this.id, old_name, name);
     },
 
-    update: function() {
-        var old_time     = this.last_update;
+    update: function () {
+        var old_time = this.last_update;
         this.last_update = Date.now();
 
         this.emit('update', old_time, this.last_update);
         this.client.emit('cell-update', this.id, old_time, this.last_update);
     },
 
-    appear: function() {
+    appear: function () {
         if (this.visible) return;
         this.visible = true;
         this.emit('appear');
@@ -649,14 +653,14 @@ Ball.prototype = {
         if (this.mine) this.client.updateScore();
     },
 
-    disappear: function() {
+    disappear: function () {
         if (!this.visible) return;
         this.visible = false;
         this.emit('disappear');
         this.client.emit('cell-disappear', this.id);
     },
 
-    toString: function() {
+    toString: function () {
         if (this.name) return this.id + '(' + this.name + ')';
         return this.id.toString();
     }
