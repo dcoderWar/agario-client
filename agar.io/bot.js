@@ -111,7 +111,7 @@ class Bot {
                 }
 
                 if (computeDistanceFromCircleEdge(master.x, master.y,
-                        player.x, player.y, master.size) <= 50) {
+                        player.x, player.y, master.size) <= 200) {
 
                     bot.log('suicide-close', "I'm really close and going straight to master!");
 
