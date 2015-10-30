@@ -4,6 +4,13 @@ agar.io suicide bot implementation
 
 ### WARNING: Its unstable! Don't bother unless you really know what your doing. Check back soon!
 
+You will need to modify the agar.io client using for example a TamperMonkey script such as [ZeachCobbler](https://github.com/RealDebugMonkey/ZeachCobbler)
+or [Apostolique/Agar.io-bot](https://github.com/Apostolique/Agar.io-bot).
+
+Basically you send(post) the x, y, cell id, and nickname to the helper's server periodically.
+I will provide step by step instructions and/or modified TamperMonkey scripts at some point in the future.
+The helper isn't quite ready yet. ***To be continued...***
+
 ## Running Locally
 
 ```sh
