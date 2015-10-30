@@ -324,7 +324,7 @@ class Helper extends Client {
                     if (!master || master.dist > thatBot.dist) {
                         this.lastMaster = id;
                         
-                        this.bot.isSlave = isSlave;
+                        this.bot.goingToSlave = isSlave;
                         this.setMaster(thatBot);
                         this.log('Destination(new ' + (isSlave ? 'slave' : 'master') + '): ', x, y);
                     }
