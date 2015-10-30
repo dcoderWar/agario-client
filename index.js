@@ -3,6 +3,10 @@
 const express      = require('express');
 const favicon      = require('serve-favicon');
 
+const tableify     = require('tableify');
+const { upTime }   = require('./agar.io/utils');
+const appData      = require('./package.json');
+
 const AgarioHelper = require('./agar.io/helper');
 
 const app = express(), port = parseInt(process.env.PORT || 5000);
@@ -21,8 +25,13 @@ app.use(favicon(__dirname + '/public/favicon-32x32.png'));
 
 app.set('port', port);
 
-app.get('/', (request, response) =>
-    response.send(helper.toString() + ' on port ' + app.get('port') + ' ' + (new Date(helper.lastJoin))));
+app.get('/', (request, response) => {
+    appData.upTime = upTime();
+    appData.lastJoin = new Date(helper.lastJoin);
+    appData.port = app.get('port');
+    appData.altVersion = helper.toString();
+    response.send(tableify(appData));
+});
 
 //noinspection JSUnresolvedFunction
 app.use(helper.middleware());
