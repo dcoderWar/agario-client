@@ -29,11 +29,12 @@ const defaultOptions = {
 };
 
 const defaultSession = {
+    test: null,
     name: 'agario-helper', // The nickname of the player
     leaders: [], // The current names on the leaderboard
     region: 'US-Atlanta', // The current region
     x: 0, y: 0, // The current position of the actual player
-    id: null, // The id of client that last updated this session
+    id: null, // The id of client that last updated this session, not the cell id, uh, everything is unstable atm!
     target: null, // The hostname of this bot when this bot is the target to be updated, or a clone's hostname
     server: null // The server's url i.e. scheme://address:port, the scheme should be "ws"
 };
@@ -287,6 +288,7 @@ class Helper extends Client {
         // The following throws the bot into slave mode
         this.bot.masterLocation = [master.x, master.y];
         this.bot.isSlave = true;
+        this.bot.masterID = this.session.test;
         this.bot.masterLastSeen = Date.now();
     }
 

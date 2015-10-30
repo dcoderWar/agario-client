@@ -421,7 +421,11 @@ function CellsIterator(bot) {
 function getMaster(cell, master) {
     var dist, temp, split = 0, player = this.player;
 
+    // If the bot is in slave mode and the cell's name matches our player name
+    // Hmmm.... Kinda an issue, seeing how anyone could use your name!!!! For now use something unique!
+    // @TODO are cell IDs consistent enough to use? i.e. if (cell.id === bot.masterID)
     if (this.isSlave && cell.name === player.name) {
+        console.log('ID CHECK:', cell.id === this.masterID, this.masterID, cell.id);
         if (isThreat(cell, player)) {
             dist = computeDistanceFromCircleEdge(cell.x, cell.y, player.x, player.y, cell.size);
 
@@ -443,9 +447,10 @@ function getMaster(cell, master) {
     }
 }
 
+// getFood and getPrey return [x, y, size]
 function getFood(cell, food) {
     if (isFood(this.player, cell))
-        return food.push(cell);
+        return food.push([cell.x, cell.y, cell.size]);
 }
 
 function getThreats(cell, threats) {
@@ -453,9 +458,10 @@ function getThreats(cell, threats) {
         return threats.push(cell);
 }
 
+// getFood and getPrey return [x, y, size]
 function getPrey(cell, prey) {
     if (isSplitTarget(this.player, cell))
-        return prey.push(cell);
+        return prey.push([cell.x, cell.y, cell.size]);
 }
 
 function getViruses(cell, viruses) {
@@ -463,27 +469,28 @@ function getViruses(cell, viruses) {
         return viruses.push(cell);
 }
 
-function skipMyCells(cell) {
+function skipMine(cell) {
     return cell.mine;
 }
 
 function getCells(bot) {
     var it = new CellsIterator(bot);
 
-    it(skipMyCells);
+    // Probably shouldn't have to perform this operation, I'll look into it sometime later
+    // As I'm maintaining a separate version of pulviscriptor/agario-client(less features, more sane) :P
+    it(skipMine);
 
     var cells = {
-        master: it(getMaster),
-        food: it(getFood),
-        threats: it(getThreats),
-        viruses: it(getViruses),
-        prey: it(getPrey)
+        master: it(getMaster), // An array of cells that this helper bot intends to feed
+        food: it(getFood), // An array of cells small enough to eat and aren't viruses
+        threats: it(getThreats), // Not an array...Ha, joking
+        viruses: it(getViruses), // An array
+        prey: it(getPrey) // An array of cells that this bot can pounce/split on and eat
     };
 
+    // If its prey than its food, the prey list isn't used any where else that I'm aware of
+    // So it might be possible to further optimize getting the full food list
     cells.food.push.apply(cells.food, cells.prey);
-    cells.food = cells.food.map(function xySize(cell) {
-        return [cell.x, cell.y, cell.size];
-    });
 
     return cells;
 }
