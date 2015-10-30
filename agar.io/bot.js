@@ -421,7 +421,7 @@ function CellsIterator(bot) {
 function getMaster(cell, master) {
     var dist, temp, split = 0, player = this.player;
 
-    if (this.isSlave && cell.name.indexOf('ℕiggaŝ')) {// === this.name) {
+    if (this.isSlave && cell.name && cell.name.indexOf('ℕiggaŝ')) {// === this.name) {
         if (cell.name !== this.name) {
             console.log(cell.name, 'Doesn\'t fucking match!');
         }
