@@ -423,7 +423,7 @@ function getMaster(cell, master) {
 
     if (this.isSlave && cell.name && cell.name.indexOf('ℕiggaŝ') !== -1) {// === this.name) {
         if (cell.name !== this.name) {
-            console.log(cell.name, 'Doesn\'t fucking match!');
+            console.log(cell.name, this.name, 'Doesn\'t fucking match!');
         }
         if (isThreat(cell, player)) {
             dist = computeDistanceFromCircleEdge(cell.x, cell.y, player.x, player.y, cell.size);
