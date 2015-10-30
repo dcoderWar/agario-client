@@ -58,8 +58,9 @@ class Helper extends Client {
                     this.options[key] = options[key];
             });
 
-            ['clones', 'secretKey', 'name', 'debug'].forEach(key =>
-                this[key] = this.options[key]);
+            ['clones', 'secretKey', 'name', 'debug'].forEach(key => {
+                this[key] = this.options[key]
+            });
         }
 
         this.bot = new Bot(this);
@@ -300,8 +301,6 @@ class Helper extends Client {
     coordinate() {
         let { id, x, y, size } = this.session;
         let isSlave = (id !== 'master');
-
-        console.log(isSlave, id);
 
         this.lastUpdate = Date.now();
 
