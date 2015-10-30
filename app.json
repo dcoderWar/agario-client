@@ -1,7 +1,7 @@
 {
   "name": "agario-helper",
   "description": "agar.io suicide bot implementation",
-  "repository": "https://github.com/dcoderWar/agario-helper.git",
+  "repository": "https://github.com/dcoderWar/agario-helper",
   "logo": "http://agar.io/favicon-32x32.png",
   "keywords": [
     "agar.io",

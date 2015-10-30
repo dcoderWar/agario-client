@@ -425,7 +425,6 @@ function getMaster(cell, master) {
     // Hmmm.... Kinda an issue, seeing how anyone could use your name!!!! For now use something unique!
     // @TODO are cell IDs consistent enough to use? i.e. if (cell.id === bot.masterID)
     if (this.isSlave && cell.name === player.name) {
-        console.log('ID CHECK:', cell.id === this.masterID, this.masterID, cell.id);
         if (isThreat(cell, player)) {
             dist = computeDistanceFromCircleEdge(cell.x, cell.y, player.x, player.y, cell.size);
 

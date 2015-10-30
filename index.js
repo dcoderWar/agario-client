@@ -12,15 +12,7 @@ const AgarioHelper = require('./agar.io/helper');
 const app = express(), port = parseInt(process.env.PORT || 5000);
 app.set('port', port);
 
-const helper = new AgarioHelper({
-    secretKey: '8*IS3APUcEkn',
-    clones: [
-        'agario-client0.herokuapp.com',
-        'agario-client1.herokuapp.com',
-        'agario-client2.herokuapp.com'
-    ],
-    debug: 3
-});
+const helper = new AgarioHelper();
 
 app.use(favicon(__dirname + '/public/favicon-32x32.png'));
 
@@ -31,10 +23,24 @@ const header = '<!DOCTYPE html><html lang="en-US"><head>' +
 const footer = '</body></html>';
 
 app.get('/', (request, response) => {
+
     appData.upTime = upTime();
     appData.lastJoin = new Date(helper.lastJoin);
     appData.port = app.get('port');
     appData.altVersion = helper.toString();
+    appData.region = helper.session.region;
+    appData.server = helper.server;
+    appData.key = helper.key;
+    appData.id = helper.id;
+    appData.sessionID = helper.session.id;
+    appData.processing = helper.processing;
+    appData.debug = helper.debug;
+    appData.cors = helper.cors;
+    appData.leaders = helper.session.leaders;
+    appData.nickName = helper.session.name;
+    appData.x = helper.session.x;
+    appData.y = helper.session.y;
+
     response.send(header + tableify(appData) + footer);
 });
 

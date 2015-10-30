@@ -5,9 +5,9 @@ var EventEmitter = require('events').EventEmitter;
 Client.Ball = Ball;
 module.exports = Client;
 
-function Client(clientName) {
+function Client(name) {
     //you can change this values
-    this.clientName = clientName; //name used for log
+    this.name = name; //name used for log
     this.debug = 1;           //debug level, 0-5 (5 will output extremely lot of data)
     this.inactive_destroy = 5 * 60 * 1000;   //time in ms when to destroy inactive cells
     this.inactive_check = 10 * 1000;     //time in ms when to search inactive cells
@@ -441,7 +441,7 @@ Client.prototype = {
     },
 
     log: function (msg) {
-        console.log(this.clientName + ': ' + msg);
+        console.log(this.name + ': ' + msg);
     },
 
     //functions that you can call to control your cells

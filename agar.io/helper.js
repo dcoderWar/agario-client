@@ -24,7 +24,7 @@ const defaultOptions = {
     // See: https://www.npmjs.com/package/cors - for detailed information on available options
     // Pass an object i.e. cors: { origin: 'http://agar.io' } or pass true to use the defaults, false to disable
     cors: true, // Useful i.e. if needing to connect using a TamperMonkey script that modifies agar.io(The origin)
-    clones: [], // A list of host names or addresses to clones that this bot should communicate with
+    clones: null, // A list of host names or addresses to clones that this bot should communicate with
     secretKey: null // A key that only this bot, clones, and the client are aware of
 };
 
@@ -58,10 +58,8 @@ class Helper extends Client {
                     this.options[key] = options[key];
             });
 
-            this.clones = this.options.clones;
-            this.secretKey = this.options.secretKey;
-            this.clientName = this.options.name;
-            this.debug = this.options.debug;
+            ['clones', 'secretKey', 'name', 'debug'].forEach(key =>
+                this[key] = this.options[key]);
         }
 
         this.bot = new Bot(this);
@@ -70,8 +68,7 @@ class Helper extends Client {
         this.mainLoop = timer(this.bot.mainLoop.bind(this.bot), 100);
         this.timeout = timer(this.timeout.bind(this), 20000);
 
-        this.joining = false;
-        this.coordinating = false;
+        this.processing = false;
 
         this.join = this.join.bind(this);
         this.coordinate = this.coordinate.bind(this);
@@ -110,6 +107,10 @@ class Helper extends Client {
         });
     }
 
+    set processing(bool) {
+        this.joining = this.coordinating = bool;
+    }
+
     get processing() {
         return (this.joining || this.coordinating) && Date.now() - this.lastUpdate <= 10000;
     }
@@ -124,7 +125,7 @@ class Helper extends Client {
 
     timeout() {
         if (this.timeout.stop()) {
-            this.joining = false;
+            this.processing = false;
             this.emit('session-resume');
         }
     }
@@ -184,10 +185,13 @@ class Helper extends Client {
     }
 
     receive({ body: session }, response) {
-        let helper = this;
+        let helper = this, joined = helper.joined;
 
         let status = (response && response.sendStatus) ?
             (code => response.sendStatus(code)) : (code => code);
+
+        if (helper.timeout.active)
+            return status(503); // Service Unavailable
 
         if (session == null || session.secretKey !== helper.secretKey)
             return status(401); // Unauthorized
@@ -195,32 +199,26 @@ class Helper extends Client {
         if (session.server == null || session.id == null || isNaN(session.x) || isNaN(session.y))
             return status(400); // Bad Request
 
-        if (helper.clones.length && helper.clones.indexOf(session.target) === -1)
+        if (helper.clones && helper.clones.indexOf(session.target) === -1)
             return status(400); // Bad Request
 
-        if (helper.timeout.active)
-            return status(503); // Service Unavailable
-
-        if (!helper.joined || helper.webSocket == null || helper.webSocket.url !== session.server) {
+        if (!joined || helper.server !== session.server) {
             helper.update(session);
 
             if (helper.processing)
                 return status(202); // Accepted
 
-            console.log('joining/coordinating...');
             helper.joining = true;
             process.nextTick(helper.join);
-            process.nextTick(helper.coordinate);
             return status(200); // OK
         }
 
-        if (session.x !== helper.session.x || session.y !== helper.session.y) {
+        if (joined && (session.x !== helper.session.x || session.y !== helper.session.y)) {
             helper.update(session);
 
             if (helper.processing)
                 return status(202); // Accepted
 
-            console.log('coordinating...');
             helper.coordinating = true;
             process.nextTick(helper.coordinate);
             return status(200); // OK
@@ -255,7 +253,6 @@ class Helper extends Client {
         }
 
         if (attempts >= 50) {
-            helper.joining = false;
             helper.timeout.start(); // Processing updates will resume after 20 seconds
             return helper.emit('session-timeout');
         }
@@ -273,7 +270,7 @@ class Helper extends Client {
 
             response.server = 'ws://' + response.server;
 
-            if (session.server && session.server !== response.server) {
+            if (session.server !== response.server) {
                 helper.emit('server-mismatch', response);
 
                 return this.join(++attempts);
@@ -288,7 +285,7 @@ class Helper extends Client {
         // The following throws the bot into slave mode
         this.bot.masterLocation = [master.x, master.y];
         this.bot.isSlave = true;
-        this.bot.masterID = this.session.test;
+        this.bot.masterID = this.session.test; /* @TODO */
         this.bot.masterLastSeen = Date.now();
     }
 
