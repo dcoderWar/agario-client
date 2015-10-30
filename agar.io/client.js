@@ -2,7 +2,7 @@ var WebSocket = require('ws');
 var Packet = require('./packet.js');
 var EventEmitter = require('events').EventEmitter;
 
-Client.Ball = Ball;
+Client.Cell = Cell;
 module.exports = Client;
 
 function Client(name) {
@@ -193,7 +193,7 @@ Client.prototype = {
 
                 var player = client.cells[eater_id];
                 if (!player)
-                    player = new Ball(client, eater_id);
+                    player = new Cell(client, eater_id);
                 player.update();
                 if (client.cells[eaten_id]) client.cells[eaten_id].destroy('eaten', eater_id);
 
@@ -251,7 +251,7 @@ Client.prototype = {
                     nick += String.fromCharCode(char);
                 }
 
-                var cell = client.cells[cell_id] || new Ball(client, cell_id);
+                var cell = client.cells[cell_id] || new Cell(client, cell_id);
                 cell.color = color;
                 cell.virus = is_virus;
                 cell.setCords(coordinate_x, coordinate_y);
@@ -273,7 +273,7 @@ Client.prototype = {
             for (i = 0; i < cells_on_screen_count; i++) {
                 cell_id = packet.readUInt32LE();
 
-                cell = client.cells[cell_id] || new Ball(client, cell_id);
+                cell = client.cells[cell_id] || new Cell(client, cell_id);
                 cell.update_tick = client.tick_counter;
                 cell.update();
                 if (cell.mine) {
@@ -305,7 +305,7 @@ Client.prototype = {
         //new ID of your cell (when you join or press space)
         '32': function (client, packet) {
             var cell_id = packet.readUInt32LE();
-            var cell = client.cells[cell_id] || new Ball(client, cell_id);
+            var cell = client.cells[cell_id] || new Cell(client, cell_id);
             cell.mine = true;
             if (!client.playerIDs.length) client.score = 0;
             client.playerIDs.push(cell_id);
@@ -340,7 +340,7 @@ Client.prototype = {
                 }
 
                 users.push(id);
-                var cell = client.cells[id] || new Ball(client, id);
+                var cell = client.cells[id] || new Cell(client, id);
                 if (name) cell.setName(name);
                 cell.update();
             }
@@ -567,7 +567,7 @@ Client.prototype = {
     }
 };
 
-function Ball(client, id) {
+function Cell(client, id) {
     if (client.cells[id]) return client.cells[id];
 
     this.id = id;
@@ -588,7 +588,7 @@ function Ball(client, id) {
     client.cells[id] = this;
     return this;
 }
-Ball.prototype = {
+Cell.prototype = {
     destroy: function (reason) {
         this.destroyed = reason;
         delete this.client.cells[this.id];
@@ -669,5 +669,5 @@ Ball.prototype = {
 // Inherit from EventEmitter
 for (var key in EventEmitter.prototype) {
     if (!EventEmitter.prototype.hasOwnProperty(key)) continue;
-    Client.prototype[key] = Ball.prototype[key] = EventEmitter.prototype[key];
+    Client.prototype[key] = Cell.prototype[key] = EventEmitter.prototype[key];
 }

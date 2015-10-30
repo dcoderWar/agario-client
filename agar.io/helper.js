@@ -285,7 +285,8 @@ class Helper extends Client {
         // The following throws the bot into slave mode
         this.bot.masterLocation = [master.x, master.y];
         this.bot.isSlave = true;
-        this.bot.masterID = this.session.test; /* @TODO */
+        this.bot.masterID = this.session.test;
+        /* @TODO */
         this.bot.masterLastSeen = Date.now();
     }
 
@@ -293,7 +294,7 @@ class Helper extends Client {
         let player = this.bot.player;
 
         // Ensure that the only properties on the returned object are x, y, and size
-        return player ? { x: player.x, y: player.y, size: player.size } : undefined;
+        return player ? {x: player.x, y: player.y, size: player.size} : undefined;
     }
 
     coordinate() {
@@ -322,7 +323,7 @@ class Helper extends Client {
 
                     if (!master || master.dist > thatBot.dist) {
                         this.lastMaster = id;
-                        
+
                         this.bot.goingToSlave = isSlave;
                         this.setMaster(thatBot);
                         this.log('Destination(new ' + (isSlave ? 'slave' : 'master') + '): ', x, y);
@@ -346,18 +347,18 @@ class Helper extends Client {
 
         this.coordinating = false;
     }
-    
+
     toString() {
         return this.bot.toString();
     }
 }
 /*
-const { EventEmitter } = require('events');
-Helper.prototype.emit = function emit(event,...args) {
-    console.log(event);
-    EventEmitter.prototype.emit.call(this, event, ...args);
-};
-*/
+ const { EventEmitter } = require('events');
+ Helper.prototype.emit = function emit(event,...args) {
+ console.log(event);
+ EventEmitter.prototype.emit.call(this, event, ...args);
+ };
+ */
 
 module.exports = Helper;
 

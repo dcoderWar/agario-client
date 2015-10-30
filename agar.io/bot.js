@@ -111,7 +111,7 @@ class Bot {
                 }
 
                 if (computeDistanceFromCircleEdge(master.x, master.y,
-                        player.x, player.y, master.size) <= 200) {
+                        player.x, player.y, master.size) <= 50) {
 
                     bot.log('suicide-close', "I'm really close and going straight to master!");
 
@@ -294,58 +294,6 @@ module.exports = Bot;
 // Export needed functions
 Bot.computeDistance = computeDistance;
 Bot.isThreat = isThreat;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 function getDistance(player, cell) {
