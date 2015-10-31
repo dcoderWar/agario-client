@@ -203,7 +203,8 @@ class Client extends EventEmitter {
 
         let { cells, inactiveDestroy } = this, keys = Object.keys(cells);
 
-        for (let cell, i = 0, length = keys.length; i < length; cell = cells[keys[i++]]) {
+        for (let cell, i = 0, length = keys.length; i < length; i++) {
+            cell = cells[keys[i]];
             if (time - cell.lastUpdate < inactiveDestroy || cell.visible)
                 continue;
 
