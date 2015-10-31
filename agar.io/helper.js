@@ -56,16 +56,17 @@ class Helper extends Client {
                     this.options[key] = options[key];
             });
 
-            ['clones', 'secretKey'].forEach(key => {
-                this[key] = this.options[key]
-            });
+            this.clones = this.options.clones;
+            this.secretKey = this.options.secretKey;
         }
 
         this.bot = new Bot(this);
 
-        this.expire = timer(this.expire.bind(this), 30000).start();
+        this.expirationTimer = timer(this.checkExpiration.bind(this), 30000);
+        this.expirationTimer();
+
         this.mainLoop = timer(this.bot.mainLoop.bind(this.bot), 100);
-        this.timeout = timer(this.timeout.bind(this), 20000);
+        this.timeout = timer(this.resume.bind(this), 20000);
 
         this.processing = false;
 
@@ -102,7 +103,7 @@ class Helper extends Client {
             this.joining = false;
 
             this.spawn(this.session.name);
-            this.mainLoop.start();
+            this.mainLoop();
         });
     }
 
@@ -122,14 +123,14 @@ class Helper extends Client {
         return !this.joining && this.webSocket && this.webSocket.readyState === this.webSocket.OPEN;
     }
 
-    timeout() {
+    resume() {
         if (this.timeout.stop()) {
             this.processing = false;
             this.emit('session-resume');
         }
     }
 
-    expire() {
+    checkExpiration() {
         if (!this.timeout.active && this.expired) {
             if (this.mainLoop.active || this.webSocket.readyState !== this.webSocket.CLOSED) {
                 this.emit('session-expire');
@@ -252,7 +253,7 @@ class Helper extends Client {
         }
 
         if (attempts >= 50) {
-            helper.timeout.start(); // Processing updates will resume after 20 seconds
+            helper.timeout(); // Processing updates will resume after 20 seconds
             return helper.emit('session-timeout');
         }
 

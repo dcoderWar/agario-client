@@ -5,9 +5,7 @@ const timer = require('./timer');
 
 class Clone {
     constructor(id, x, y, otherBot) {
-        this.expire = timer.once(function expire() {
-            delete knownBots[id];
-        }, 5000);
+        this.persist = timer.once(id => delete knownBots[id], 5000, id);
         
         this.update(x, y, otherBot);
     }
@@ -17,7 +15,7 @@ class Clone {
             this.x = x;
             this.y = y;
 
-            this.expire.start();
+            this.persist();
             return true;
         }
         return false;

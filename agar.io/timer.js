@@ -1,70 +1,41 @@
 'use strict';
 
-module.exports = timer;
-timer.once = once;
+module.exports = createTimer(setInterval, clearInterval);
+module.exports.once = createTimer(setTimeout, clearTimeout);
 
-function timer(timedFn, ms, ...args) {
-    let id = 0, active = false;
+function createTimer(setTimer, clearTimer) {
+    return function Timer(fn, ms, ...args) {
+        let id = 0, active = false;
 
-    if (typeof(timedFn) !== 'function')
-        throw new TypeError('setInterval expects [object Function]');
+        if (typeof(fn) !== 'function')
+            throw new TypeError('Timer function argument is not typeof function');
 
-    function start() {
-        stop();
-        active = true;
-        id = setInterval(timedFn, ms, ...args);
-        timedFn(...args);
-    }
-
-    function stop() {
-        if (active) {
-            active = false;
-            clearInterval(id);
-            return true;
+        function timer() {
+            clear();
+            active = true;
+            id = setTimer(fn, ms, ...args);
         }
-        return false;
-    }
 
-    Object.defineProperties(timedFn, {
-        start: { value: start },
-        stop: { value: stop },
-        active: {
-            get() { return active; }
+        function clear() {
+            if (active) {
+                active = false;
+                clearTimer(id);
+                return true;
+            }
+            return false;
         }
-    });
 
-    return timedFn;
-}
+        Object.defineProperties(timer, {
+            stop: {
+                value: clear
+            },
+            active: {
+                get() {
+                    return active;
+                }
+            }
+        });
 
-function once(timedFn, ms, ...args) {
-    let id = 0, active = false;
-
-    if (typeof(timedFn) !== 'function')
-        throw new TypeError('setTimeout expects [object Function]');
-
-    function start() {
-        stop();
-        active = true;
-        id = setTimeout(timedFn, ms, ...args);
-        timedFn(...args);
-    }
-
-    function stop() {
-        if (active) {
-            active = false;
-            clearTimeout(id);
-            return true;
-        }
-        return false;
-    }
-
-    Object.defineProperties(timedFn, {
-        start: { value: start },
-        stop: { value: stop },
-        active: {
-            get() { return active; }
-        }
-    });
-
-    return timedFn;
+        return timer;
+    };
 }

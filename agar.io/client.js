@@ -348,6 +348,7 @@ class Cell extends EventEmitter {
     constructor(client, id) {
         super();
 
+        // @TODO - WTF is this shit doing here anyway?
         if (client.cells[id]) return client.cells[id];
 
         this.id = id;
@@ -366,7 +367,6 @@ class Cell extends EventEmitter {
         this.updateTick = 0;
 
         client.cells[id] = this;
-        return this;
     }
 
     destroy(reason) {
