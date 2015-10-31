@@ -6,7 +6,7 @@ const { EventEmitter } = require('events');
 
 const defaultOptions = { // You can change these values
     name: 'agario-client',
-    debug: 1, // Debug level, 0-5 (5 will output an extreme amount of data)
+    debug: 2, // Debug level, 0-5 (5 will output an extreme amount of data)
     inactiveDestroy: 5 * 60 * 1000, // Time in ms when to destroy inactive cells
     inactiveCheck: 10 * 1000, // Time in ms when to search inactive cells
     spawnInterval: 200, // Time in ms for respawn interval. 0 to disable (if your custom server don't have spawn problems)
@@ -384,7 +384,7 @@ class Cell extends EventEmitter {
         }
 
         this.emit('destroy', reason);
-        client.emit.log('cell-destroy', this.id, reason);
+        client.emit6.log('cell-destroy', this.id, reason);
     }
 
     setCords(newX, newY) {
