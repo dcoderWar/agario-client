@@ -62,6 +62,7 @@ class Client extends EventEmitter {
         });
 
         this.log = log;
+        this.justEmit = emit;
 
 
         // Don't change things below if you don't understand what you're doing
@@ -161,7 +162,7 @@ class Client extends EventEmitter {
         if (this.debug >= 5)
             this.log('dump: ' + packet.toString());
 
-        this.emit('message', packet);
+        this.justEmit('message', packet);
         processor(this, packet);
     }
 
@@ -477,7 +478,7 @@ Object.defineProperty(Client.prototype, 'processors', {
                 client.emit4('something-ate', client.cells[eatersID], client.cells[eatenID]);
                 
                 if (player.mine)
-                    client.emit.log('player-ate', client.cells[eatenID], player);
+                    client.emit('player-ate', client.cells[eatenID], player);
             }
 
 
