@@ -189,8 +189,8 @@ class Client extends EventEmitter {
         this.spawnAttempt = 0;
 
         let { cells } = this, keys = Object.keys(cells);
-        for (let cell, i = 0, length = keys.length; i < length; cell = cells[keys[i++]])
-            cells[k].destroy('reset');
+        for (let i = 0, length = keys.length; i < length; i++)
+            cells[keys[i]].destroy('reset');
 
         this.emit3.log('reset', reason);
     }
