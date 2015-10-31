@@ -20,7 +20,6 @@ const bodyParser = require('body-parser');
 const defaultOptions = {
     name: 'AgarioHelper', // The name used for logging purposes
     path: '/update', // The path to receive updates
-    debug: 0, // Debug logging level
     // See: https://www.npmjs.com/package/cors - for detailed information on available options
     // Pass an object i.e. cors: { origin: 'http://agar.io' } or pass true to use the defaults, false to disable
     cors: true, // Useful i.e. if needing to connect using a TamperMonkey script that modifies agar.io(The origin)
@@ -43,7 +42,7 @@ const validOptionKeys = Object.keys(defaultOptions), validSessionKeys = Object.k
 
 class Helper extends Client {
     constructor(options) {
-        super();
+        super(options);
 
         // An unique ID for this instance
         this.id = createUUID();
@@ -58,7 +57,7 @@ class Helper extends Client {
                     this.options[key] = options[key];
             });
 
-            ['clones', 'secretKey', 'name', 'debug'].forEach(key => {
+            ['clones', 'secretKey'].forEach(key => {
                 this[key] = this.options[key]
             });
         }
@@ -113,11 +112,11 @@ class Helper extends Client {
     }
 
     get processing() {
-        return (this.joining || this.coordinating) && Date.now() - this.lastUpdate <= 10000;
+        return (this.joining || this.coordinating) && Date.now() - this.lastRequest <= 10000;
     }
 
     get expired() {
-        return Date.now() - this.lastUpdate >= 60000;
+        return Date.now() - this.lastRequest >= 60000;
     }
 
     get joined() {
@@ -239,7 +238,7 @@ class Helper extends Client {
         let helper = this;
         let { session, webSocket } = helper;
 
-        helper.lastUpdate = Date.now();
+        helper.lastRequest = Date.now();
 
         if (attempts === undefined) attempts = 0;
 
@@ -302,7 +301,7 @@ class Helper extends Client {
         let { id, x, y, size } = this.session;
         let isSlave = (id !== 'master');
 
-        this.lastUpdate = Date.now();
+        this.lastRequest = Date.now();
 
         let thisBot = this.bot.player;
 
