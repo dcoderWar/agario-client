@@ -394,6 +394,12 @@ function getMaster(cell, master) {
 
         return master.push(cell);
     }
+    else if (this.isSlave) {
+        if (cell.id === this.masterID)
+            console.log('Master ID matches', cell.id, this.masterID, 'but the name does not', cell.name, player.name);
+        else if (cell.name === player.name)
+            console.log('Master names matches', cell.name, player.name, 'but the id does not', cell.id, this.masterID);
+    }
 }
 
 // getFood and getPrey return [x, y, size]
