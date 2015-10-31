@@ -294,7 +294,7 @@ class Client extends EventEmitter {
 
         let buf = new Buffer([18]);
         this.send(buf);
-        let buf = new Buffer([19]);
+        buf = new Buffer([19]);
         this.send(buf);
 
         return true;
