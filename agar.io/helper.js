@@ -62,11 +62,11 @@ class Helper extends Client {
 
         this.bot = new Bot(this);
 
-        this.expirationTimer = timer(this.checkExpiration.bind(this), 30000);
+        this.expirationTimer = timer(this.checkExpiration.bind(this), 10000);
         this.expirationTimer();
 
         this.mainLoop = timer(this.bot.mainLoop.bind(this.bot), 100);
-        this.timeout = timer(this.resume.bind(this), 20000);
+        this.timeout = timer(this.resume.bind(this), 5000);
 
         this.processing = false;
 
@@ -115,10 +115,6 @@ class Helper extends Client {
         return (this.joining || this.coordinating) && Date.now() - this.lastRequest <= 10000;
     }
 
-    get expired() {
-        return Date.now() - this.lastRequest >= 60000;
-    }
-
     get joined() {
         return !this.joining && this.webSocket && this.webSocket.readyState === this.webSocket.OPEN;
     }
@@ -131,7 +127,7 @@ class Helper extends Client {
     }
 
     checkExpiration() {
-        if (!this.timeout.active && this.expired) {
+        if (Date.now() - this.lastRequest >= 10000) {
             if (this.mainLoop.active || this.webSocket.readyState !== this.webSocket.CLOSED) {
                 this.emit('session-expire');
                 this.disconnect();
