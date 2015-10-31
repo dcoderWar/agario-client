@@ -23,7 +23,7 @@ const defaultOptions = {
     // Pass an object i.e. cors: { origin: 'http://agar.io' } or pass true to use the defaults, false to disable
     cors: true, // Useful i.e. if needing to connect using a TamperMonkey script that modifies agar.io(The origin)
     clones: null, // A list of host names or addresses to clones that this bot should communicate with
-    secretKey: null // A key that only this bot, clones, and the client are aware of
+    secretKey: undefined // A key that only this bot, clones, and the client are aware of
 };
 
 const defaultSession = {
