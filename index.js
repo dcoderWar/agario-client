@@ -12,7 +12,7 @@ const AgarioHelper = require('./agar.io/helper');
 const app = express(), port = parseInt(process.env.PORT || 5000);
 app.set('port', port);
 
-const helper = new AgarioHelper();
+const helper = new AgarioHelper({ debug: 2 });
 
 app.use(favicon(__dirname + '/public/favicon-32x32.png'));
 

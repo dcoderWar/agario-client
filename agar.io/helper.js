@@ -18,7 +18,6 @@ const bodyParser = require('body-parser');
 // @TODO finish integrating old code!!!
 
 const defaultOptions = {
-    name: 'AgarioHelper', // The name used for logging purposes
     path: '/update', // The path to receive updates
     // See: https://www.npmjs.com/package/cors - for detailed information on available options
     // Pass an object i.e. cors: { origin: 'http://agar.io' } or pass true to use the defaults, false to disable
