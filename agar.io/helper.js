@@ -28,6 +28,7 @@ const defaultOptions = {
 
 const defaultSession = {
     test: null,
+    key: null,
     name: 'agario-helper', // The nickname of the player
     leaders: [], // The current names on the leaderboard
     region: 'US-Atlanta', // The current region
@@ -273,6 +274,8 @@ class Helper extends Client {
             }
 
             helper.emit('session-attempt', response);
+            console.log(response.key === session.key ? 'Matching keys:' : 'Different keys:', session.key, response.key);
+            throw 'foobar';
             helper.connect(response.server, response.key);
         });
     }
