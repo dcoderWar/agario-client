@@ -33,5 +33,6 @@ function defineLazyLoader(e,m,p){Object.defineProperty(e,m,{configurable:true,ge
 
 defineLazyLoader(module.exports, 'EventLog', './events/logger');
 defineLazyLoader(module.exports, 'mirror', './object/mirror');
+defineLazyLoader(module.exports, 'merge', './object/merge');
 defineLazyLoader(module.exports, 'range', './range');
 defineLazyLoader(module.exports, 'timer', './timer');
