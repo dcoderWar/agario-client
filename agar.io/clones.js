@@ -1,7 +1,7 @@
 'use strict';
 
 const Bot = require('./bot'), knownBots = {};
-const timer = require('./timer');
+const { timer } = require('./utils');
 
 class Clone {
     constructor(id, x, y, otherBot) {
