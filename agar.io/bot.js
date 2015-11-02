@@ -31,6 +31,10 @@ Object.defineProperty(Number.prototype, 'mod', {
 });
 
 class Bot {
+
+}
+
+class SomethingElse {
     constructor(client) {
         // Sanity Checks
         if (client == null) throw new TypeError('Invalid constructor argument');
@@ -70,6 +74,18 @@ class Bot {
         if (this.isSlave && Date.now() - this.masterLastSeen > 5000) {
             this.isSlave = false;
         }
+    }
+
+    get x() {
+        return this.player ? this.player.x : 0;
+    }
+
+    get y() {
+        return this.player ? this.player.y : 0;
+    }
+
+    get size() {
+        return this.player ? this.player.size : 0;
     }
 
     getPlayer() {
@@ -290,21 +306,21 @@ class Bot {
     }
 }
 
-module.exports = Bot;
+module.exports = SomethingElse;
 
 // Export needed functions
-Bot.computeDistance = computeDistance;
-Bot.isThreat = isThreat;
+SomethingElse.computeDistance = computeDistance;
+SomethingElse.isThreat = isThreat;
 
 
 function getDistance(player, cell) {
-    var distance = {};
-    distance.relative = computeDistanceFromCircleEdge(cell.x, cell.y, player.x, player.y, cell.size);
-    distance.absolute = computeDistance(cell.x, cell.y, player.x, player.y);
-    distance.split = cell.size + splitDistance + 150;
-    distance.danger = cell.size + 150;
-    distance.shift = player.size;
-    return distance;
+    return {
+        relative: computeDistanceFromCircleEdge(cell.x, cell.y, player.x, player.y, cell.size),
+        absolute: computeDistance(cell.x, cell.y, player.x, player.y),
+        split: cell.size + splitDistance + 150,
+        danger: cell.size + 150,
+        shift: player.size
+    };
 }
 
 function isThreat(player, cell) {

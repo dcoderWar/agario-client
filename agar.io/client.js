@@ -2,68 +2,16 @@
 
 const WebSocket = require('ws');
 const Packet = require('./packet.js');
-const { EventEmitter } = require('events');
+const { EventLog } = require('./utils');
 
-const defaultOptions = { // You can change these values
-    name: 'agario-client',
-    debug: 0, // Debug level, 0-6 (5 and higher will output an extreme amount of data!)
-    inactiveDestroy: 5 * 60 * 1000, // Time in ms when to destroy inactive cells
-    inactiveCheck: 10 * 1000, // Time in ms when to search inactive cells
-    spawnInterval: 200, // Time in ms for respawn interval. 0 to disable (if your custom server don't have spawn problems)
-    spawnAttempts: 25 // How many attempts to spawn before giving up (official servers do have unstable spawn problems)
-};
+const { defineOptions,
+    client: { options: defaults } } = require('./config');
 
-const validOptions = Object.keys(defaultOptions);
-
-class Client extends EventEmitter {
+class Client extends EventLog {
     constructor(options) {
-        super();
+        super(options);
 
-        if (options) {
-            validOptions.forEach(opt =>
-                this[opt] = options.hasOwnProperty(opt) ? options[opt] : defaultOptions[opt]);
-        }
-        else {
-            validOptions.forEach(opt => this[opt] = defaultOptions[opt]);
-        }
-
-        let log = console.log.bind(console, this.name + ':');
-        let emit = this.emit.bind(this);
-        let debugLevels = [1, 2, 3, 4, 5, 6];
-        
-        debugLevels.forEach(level => {
-            let method = level > 1 ? 'emit' + level : 'emit';
-
-            if (this.debug >= level) {
-                // Log only the event but emit the event with args
-                this[method] = (event, ...args) => {
-                    log(event);
-                    emit(event, ...args);
-                    return this;
-                };
-
-                // Log and emit the event with args
-                this[method].log = (event, ...args) => {
-                    log(event + ':', ...args);
-                    emit(event, ...args);
-                    return this;
-                };
-            }
-            else {
-                // Just emit the event with args
-                this[method] = (...args) => {
-                    emit(...args);
-                    return this;
-                };
-
-                // Just emit the event with args
-                this[method].log = this[method];
-            }
-        });
-
-        this.log = log;
-        this.justEmit = emit;
-
+        defineOptions(this, defaults, options);
 
         // Don't change things below if you don't understand what you're doing
 
@@ -162,7 +110,7 @@ class Client extends EventEmitter {
         if (this.debug >= 5)
             this.log('dump: ' + packet.toString());
 
-        this.justEmit('message', packet);
+        this.onlyEmit('message', packet);
         processor(this, packet);
     }
 
@@ -193,7 +141,7 @@ class Client extends EventEmitter {
         for (let i = 0, length = keys.length; i < length; i++)
             cells[keys[i]].destroy('reset');
 
-        this.emit3.log('reset', reason);
+        this.emit_3.log('reset', reason);
     }
 
     destroyInactive() {
@@ -225,15 +173,15 @@ class Client extends EventEmitter {
 
         if (this.score === newScore) return;
         this.score = newScore;
-        
-        this.emit2.log('score-update', oldScore, newScore);
+
+        this.emit_2.log('score-update', oldScore, newScore);
     }
 
     // Functions that you can call to control your cells
 
     // Spawn cell
     spawn(name) {
-        this.emit3.log('spawn', name);
+        this.emit_3.log('spawn', name);
 
         if (this.webSocket.readyState !== WebSocket.OPEN) {
             this.emit.log('warning', 'Spawn was called when connection was not established, packet will be dropped');
@@ -371,20 +319,20 @@ class Cell extends EventEmitter {
 
     destroy(reason) {
         let { client } = this;
-        
+
         this.destroyed = reason;
         delete client.cells[this.id];
-        
+
         let cellIndex = client.playerIDs.indexOf(this.id);
         if (cellIndex > -1) {
             client.playerIDs.splice(cellIndex, 1);
-            
+
             client.emit.log('player-cell-loss', this.id, reason);
             if (!client.playerIDs.length) client.emit.log('player-death', reason);
         }
 
         this.emit('destroy', reason);
-        client.emit6.log('cell-destroy', this.id, reason);
+        client.emit_6.log('cell-destroy', this.id, reason);
     }
 
     setCords(newX, newY) {
@@ -396,7 +344,7 @@ class Cell extends EventEmitter {
 
         if (!oldX && !oldY) return;
         this.emit('move', oldX, oldY, newX, newY);
-        this.client.emit6.log('cell-move', this.id, oldX, oldY, newX, newY); // @TODO too much? 
+        this.client.emit_6.log('cell-move', this.id, oldX, oldY, newX, newY); // @TODO too much? 
     }
 
     setSize(newSize) {
@@ -407,7 +355,7 @@ class Cell extends EventEmitter {
 
         if (!oldSize) return;
         this.emit('resize', oldSize, newSize);
-        this.client.emit6.log('cell-resize', this.id, oldSize, newSize);
+        this.client.emit_6.log('cell-resize', this.id, oldSize, newSize);
         if (this.mine) this.client.updateScore();
     }
 
@@ -417,7 +365,7 @@ class Cell extends EventEmitter {
         this.name = name;
 
         this.emit('rename', oldName, name);
-        this.client.emit6.log('cell-rename', this.id, oldName, name);
+        this.client.emit_6.log('cell-rename', this.id, oldName, name);
     }
 
     update() {
@@ -425,14 +373,14 @@ class Cell extends EventEmitter {
         this.lastUpdate = Date.now();
 
         this.emit('update', oldTime, this.lastUpdate);
-        this.client.emit6.log('cell-update', this.id, oldTime, this.lastUpdate);
+        this.client.emit_6.log('cell-update', this.id, oldTime, this.lastUpdate);
     }
 
     appear() {
         if (this.visible) return;
         this.visible = true;
         this.emit('appear');
-        this.client.emit6.log('cell-appear', this.id);
+        this.client.emit_6.log('cell-appear', this.id);
 
         if (this.mine) this.client.updateScore();
     }
@@ -441,7 +389,7 @@ class Cell extends EventEmitter {
         if (!this.visible) return;
         this.visible = false;
         this.emit('disappear');
-        this.client.emit6.log('cell-disappear', this.id);
+        this.client.emit_6.log('cell-disappear', this.id);
     }
 
     toString() {
@@ -464,10 +412,10 @@ Object.defineProperty(Client.prototype, 'processors', {
                 let eatenID = packet.readUInt32LE();
 
                 /*
-                if (client.debug >= 4)
-                    client.log(eatersID + ' ate ' + eatenID + ' (' + client.cells[eatersID] + '>' + client.cells[eatenID] + ')');
-                */
-                
+                 if (client.debug >= 4)
+                 client.log(eatersID + ' ate ' + eatenID + ' (' + client.cells[eatersID] + '>' + client.cells[eatenID] + ')');
+                 */
+
                 let player = client.cells[eatersID];
                 if (!player)
                     player = new Cell(client, eatersID);
@@ -475,8 +423,8 @@ Object.defineProperty(Client.prototype, 'processors', {
                 if (client.cells[eatenID]) client.cells[eatenID].destroy('eaten', eatersID);
 
                 // @TODO provide method to separate emit args from log args, maybe chainable ?
-                client.emit4('something-ate', client.cells[eatersID], client.cells[eatenID]);
-                
+                client.emit_4('something-ate', client.cells[eatersID], client.cells[eatenID]);
+
                 if (player.mine)
                     client.emit('player-ate', client.cells[eatenID], player);
             }
@@ -541,11 +489,11 @@ Object.defineProperty(Client.prototype, 'processors', {
                 cell.update();
 
                 /*
-                if (client.debug >= 5)
-                    client.log('action: cellID=' + cellID + ' coordX=' + coordX + ' coordY=' + coordY + ' size=' + size + ' isVirus=' + isVirus + ' nick=' + nick);
-                */
-                
-                client.emit5.log('cell-action', cellID, coordX, coordY, size, isVirus, nick);
+                 if (client.debug >= 5)
+                 client.log('action: cellID=' + cellID + ' coordX=' + coordX + ' coordY=' + coordY + ' size=' + size + ' isVirus=' + isVirus + ' nick=' + nick);
+                 */
+
+                client.emit_5.log('cell-action', cellID, coordX, coordY, size, isVirus, nick);
             }
 
             let cellsOnScreen = packet.readUInt32LE();
@@ -573,11 +521,11 @@ Object.defineProperty(Client.prototype, 'processors', {
             let zoom = packet.readFloat32LE();
 
             /*
-            if (client.debug >= 4)
-                client.log('spectate FOV update: x=' + x + ' y=' + y + ' zoom=' + zoom);
-            */
+             if (client.debug >= 4)
+             client.log('spectate FOV update: x=' + x + ' y=' + y + ' zoom=' + zoom);
+             */
 
-            client.emit4.log('spectate-field-update', x, y, zoom);
+            client.emit_4.log('spectate-field-update', x, y, zoom);
         },
 
         '20': function () {
@@ -600,7 +548,7 @@ Object.defineProperty(Client.prototype, 'processors', {
                 client.spawnID = 0;
             }
 
-            client.emit2.log('player-cell-gain', cellID);
+            client.emit_2.log('player-cell-gain', cellID);
         },
 
         // Leaderboard update in FFA mode
@@ -628,7 +576,7 @@ Object.defineProperty(Client.prototype, 'processors', {
             let oldLeaders = client.leaders;
             client.leaders = users;
 
-            client.emit2.log('leaderboard-update', users, oldLeaders);
+            client.emit_2.log('leaderboard-update', users, oldLeaders);
         },
 
         // Teams scored update in teams mode
@@ -645,7 +593,7 @@ Object.defineProperty(Client.prototype, 'processors', {
 
             client.teamsScores = teamsScores;
 
-            client.emit2.log('teams-scores-update', oldScores, teamsScores);
+            client.emit_2.log('teams-scores-update', oldScores, teamsScores);
         },
 
         // Map size load
@@ -655,7 +603,7 @@ Object.defineProperty(Client.prototype, 'processors', {
             let max_x = packet.readFloat64LE();
             let max_y = packet.readFloat64LE();
 
-            client.emit2.log('map-size-update', min_x, min_y, max_x, max_y);
+            client.emit_2.log('map-size-update', min_x, min_y, max_x, max_y);
         },
 
         // Another unknown packet
@@ -668,7 +616,7 @@ Object.defineProperty(Client.prototype, 'processors', {
             let currentExp = packet.readUInt32LE();
             let needExp = packet.readUInt32LE();
 
-            client.emit2.log('experience-update', level, currentExp, needExp);
+            client.emit_2.log('experience-update', level, currentExp, needExp);
         },
 
         '240': function (client, packet) {

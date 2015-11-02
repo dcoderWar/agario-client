@@ -1,5 +1,8 @@
 'use strict';
 
+const fs = require('fs');
+const path = require('path');
+
 module.exports = {
     createUUID() {
         // http://www.ietf.org/rfc/rfc4122.txt
@@ -27,3 +30,22 @@ module.exports = {
 
     }
 };
+
+(function walk(dir) {
+    let results = [];
+    let list = fs.readdirSync(dir);
+    list.forEach(file => {
+        file = path.join(dir, file);
+        var stat = fs.statSync(file);
+        if (stat && stat.isDirectory()) results = results.concat(walk(file));
+        else results.push(file)
+    });
+    return results
+}(__dirname)).forEach(function load(file) {
+    if (path.basename(file, '.js') !== 'index' && path.extname(file) === '.js') {
+        let definition = require(file);
+        console.log(stat.name);
+        Object.keys(definition).forEach(name =>
+            module.exports[name] = definition[name]);
+    }
+});

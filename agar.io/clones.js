@@ -18,6 +18,7 @@ class Clone {
             this.persist();
             return true;
         }
+
         return false;
     }
 

@@ -1,0 +1,50 @@
+{
+    "helper": {
+        "options": {
+            "name": "agario-helper"
+        },
+        "middleware": {
+            "cors": {
+                "origin": "http://agar.io"
+            },
+            "key": "",
+            "coordinate": {
+                "key": "",
+                "id": "",
+                "name": "",
+                "x": 0,
+                "y": 0
+            },
+            "connect": {
+                "key": "",
+                "leaders": [],
+                "region": "US-Atlanta",
+                "server": ""
+            }
+        }
+    },
+    "bot": {
+        "options": {
+            "name": "agario-bot"
+        },
+        "splitDistance": 710
+    },
+    "client": {
+        "options": {
+            "name": "agario-client",
+            "inactiveDestroy": 300000,
+            "inactiveCheck": 10000,
+            "spawnInterval": 200,
+            "spawnAttempts": 25
+        }
+    },
+    "eventLog": {
+        "options": {
+            "name": "event",
+            "debug": 0,
+            "minLevel": 1,
+            "maxLevel": 6
+        }
+    },
+    "weakOptions": false
+}
