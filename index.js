@@ -7,12 +7,12 @@ const tableify     = require('tableify');
 const { upTime }   = require('./agar.io/utils');
 const appData      = require('./package.json');
 
-const AgarioHelper = require('./agar.io/helper');
+const { Helper } = require('./agar.io');
 
 const app = express(), port = parseInt(process.env.PORT || 5000);
 app.set('port', port);
 
-const helper = new AgarioHelper({ debug: 2 });
+const helper = new Helper({ debug: 2 });
 
 app.use(favicon(__dirname + '/public/favicon-32x32.png'));
 

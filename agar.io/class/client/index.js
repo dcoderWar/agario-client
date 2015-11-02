@@ -1,11 +1,11 @@
 'use strict';
 
 const WebSocket = require('ws');
-const Packet = require('./packet.js');
-const { EventLog } = require('./utils');
+const Packet = require('./packet');
+const { EventLog } = require('./../../utils');
 
 const { defineOptions,
-    client: { options: defaults } } = require('./config');
+    client: { options: defaults } } = require('./../../config');
 
 class Client extends EventLog {
     constructor(options) {

@@ -5,15 +5,15 @@ const cors = require('cors');
 const parseUrl = require('parseurl');
 const bodyParser = require('body-parser');
 
-const Client = require('./client');
-const Bot = require('./bot');
+const Client = require('./../client/index');
+const Bot = require('./../bot');
 const Clone = require('./clones');
-const servers = require('./servers');
+const servers = require('./../client/servers');
 
-const { createUUID, timer } = require('./utils');
+const { createUUID, timer } = require('./../../utils/index');
 
 const { createOptions,
-    helper: { options: defaults } } = require('./config');
+    helper: { options: defaults } } = require('./../../config/index');
 
 class Helper extends Client {
     constructor(options) {
