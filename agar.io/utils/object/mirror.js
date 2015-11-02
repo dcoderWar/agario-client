@@ -4,9 +4,7 @@ const unbind = Function.call.bind(Function.bind, Function.call);
 const bind = unbind(Function.bind);
 const owns = unbind(Object.prototype.hasOwnProperty);
 
-module.exports = {
-    mirror
-};
+module.exports = mirror;
 
 function mirror(target, source, descriptors, weak) {
     let keys = Object.keys(descriptors);

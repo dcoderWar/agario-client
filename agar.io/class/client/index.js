@@ -1,13 +1,17 @@
 'use strict';
 
+// npm modules
 const WebSocket = require('ws');
+
+// relative modules
 const Packet = require('./packet');
-const { EventLog } = require('./../../utils');
+const servers = require('./servers');
 
-const { defineOptions,
-    client: { options: defaults } } = require('./../../config');
+// classes, utils, and configuration
+const { utils, config } = require('./../../');
+const { defineOptions, client: { options: defaults } } = config;
 
-class Client extends EventLog {
+class Client extends utils.EventLog {
     constructor(options) {
         super(options);
 

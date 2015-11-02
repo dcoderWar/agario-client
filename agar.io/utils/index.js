@@ -1,8 +1,5 @@
 'use strict';
 
-const fs = require('fs');
-const path = require('path');
-
 module.exports = {
     createUUID() {
         // http://www.ietf.org/rfc/rfc4122.txt
@@ -28,25 +25,26 @@ module.exports = {
 
         return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
 
-    }
+    },
+    defineLazyLoader
 };
 
-(function walk(dir) {
-    let results = [];
-    let list = fs.readdirSync(dir);
-    list.forEach(file => {
-        file = path.join(dir, file);
-        var stat = fs.statSync(file);
-        if (stat && stat.isDirectory()) results = results.concat(walk(file));
-        else results.push(file)
-    });
-    return results
-}(__dirname)).forEach(function load(file) {
-    if (path.basename(file, '.js') !== 'index' && path.extname(file) === '.js') {
-        let definition = require(file);
-        Object.keys(definition).forEach(name =>
-            module.exports[name] = definition[name]);
-    }
-});
+function defineLazyLoader(exports, module, path) {
+    Object.defineProperty(exports, module, {
+        configurable: true,
+        get() {
+            let definition = require(path);
 
-console.log(module.exports)
+            Object.defineProperty(exports, module, {
+                value: definition
+            });
+
+            return definition;
+        }
+    });
+}
+
+defineLazyLoader(module.exports, 'EventLog', './events/logger');
+defineLazyLoader(module.exports, 'mirror', './object/mirror');
+defineLazyLoader(module.exports, 'range', './range');
+defineLazyLoader(module.exports, 'timer', './timer');

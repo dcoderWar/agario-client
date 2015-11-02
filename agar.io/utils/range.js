@@ -1,8 +1,6 @@
 'use strict';
 
-module.exports = {
-    range
-};
+module.exports = range;
 
 // Author: Alexander Dickson (http://stackoverflow.com/users/31671/alex) on Oct 9 '10 at 2:54
 // Source: http://stackoverflow.com/a/3895521 (http://stackoverflow.com/posts/3895521/revisions)

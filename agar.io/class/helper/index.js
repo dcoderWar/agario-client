@@ -1,10 +1,6 @@
 'use strict';
 
-const path = require('path');
-const resolve = path.resolve.bind(path, path.resolve(__dirname, '../../'));
-const load = lib => require(resolve(lib));
-
-// npm_modules
+// npm modules
 const http = require('http');
 const cors = require('cors');
 const parseUrl = require('parseurl');
@@ -13,12 +9,10 @@ const bodyParser = require('body-parser');
 // relative modules
 const Clone = require('./clones');
 
-// agar.io modules
-const Client = load('class/client');
-const Bot = load('class/bot');
-const { createUUID, timer } = load('utils');
-const { createOptions,
-    helper: { options: defaults } } = load('config');
+// classes, utils, and configuration
+const { Client, Bot, utils, config } = require('./../../');
+const { createUUID, timer } = utils;
+const { createOptions, helper: { options: defaults } } = config;
 
 class Helper extends Client {
     constructor(options) {

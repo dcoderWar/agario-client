@@ -1,10 +1,7 @@
 'use strict';
 
-module.exports = {
-    timer: createTimer(setInterval, clearInterval)
-};
-
-module.exports.timer.once = createTimer(setTimeout, clearTimeout);
+module.exports = createTimer(setInterval, clearInterval);
+module.exports.once = createTimer(setTimeout, clearTimeout);
 
 function createTimer(setTimer, clearTimer) {
     return function Timer(fn, ms, ...args) {

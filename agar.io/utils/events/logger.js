@@ -51,4 +51,4 @@ class EventLog extends EventEmitter {
     }
 }
 
-module.exports = { EventLog };
+module.exports = EventLog;
