@@ -22,9 +22,11 @@
 
 'use strict';
 
-merge(this, require('./methods'));
+const { utils: { mirror, merge }, config } = require('./../../');
+const { defineOptions, splitDistance,
+    bot: { options: defaults } } = config;
 
-const splitDistance = 710;
+merge(this, require('./methods'));
 
 Object.defineProperty(Number.prototype, 'mod', {
     value: function mod(n) {
