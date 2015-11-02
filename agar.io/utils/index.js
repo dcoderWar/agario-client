@@ -44,8 +44,9 @@ module.exports = {
 }(__dirname)).forEach(function load(file) {
     if (path.basename(file, '.js') !== 'index' && path.extname(file) === '.js') {
         let definition = require(file);
-        console.log(stat.name);
         Object.keys(definition).forEach(name =>
             module.exports[name] = definition[name]);
     }
 });
+
+console.log(module.exports)
