@@ -3,16 +3,19 @@
 const unbind = Function.call.bind(Function.bind, Function.call);
 const toString = unbind(Object.prototype.toString);
 
-module.exports = {
-    defineOptions,
-    createOptions,
-    updateOptions
-};
+const config = module.exports = require('./config.json');
 
+module.exports.defineOptions = defineOptions;
+module.exports.createOptions = createOptions;
+module.exports.updateOptions = updateOptions;
 
+const defineOption = config.weakOptions ? defineWeakOption : defineStrongOption;
 
-if (process.env.production)
-function defineOption(obj, opt, val) {
+function defineWeakOption(obj, opt, value) {
+    Object.defineProperty(obj, opt, { value });
+}
+
+function defineStrongOption(obj, opt, val) {
     let type = toString(val);
 
     Object.defineProperty(obj, opt, {
