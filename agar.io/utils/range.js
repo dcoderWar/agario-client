@@ -7,7 +7,7 @@ module.exports = {
 // Author: Alexander Dickson (http://stackoverflow.com/users/31671/alex) on Oct 9 '10 at 2:54
 // Source: http://stackoverflow.com/a/3895521 (http://stackoverflow.com/posts/3895521/revisions)
 // Lic.  : CC BY-SA 2.5 (http://creativecommons.org/licenses/by-sa/2.5/) [Attribution Required]
-// Extras: https://github.com/alexanderdickson
+// Github: https://github.com/alexanderdickson (https://gist.github.com/alexanderdickson)
 
 function range(start, end, step) {
     var range = [];
