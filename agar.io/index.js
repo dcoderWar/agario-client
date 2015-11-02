@@ -1,6 +1,7 @@
 'use strict';
 
-const { defineLazyLoader } = require('./utils');
+function defineLazyLoader(e,m,p){Object.defineProperty(e,m,{configurable:true,get(){
+    let d=require(p);Object.defineProperty(e,m,{value:d});return d;}});}
 
 module.exports = {};
 

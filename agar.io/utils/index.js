@@ -25,24 +25,11 @@ module.exports = {
 
         return pad(hours) + ':' + pad(minutes) + ':' + pad(seconds);
 
-    },
-    defineLazyLoader
+    }
 };
 
-function defineLazyLoader(exports, module, path) {
-    Object.defineProperty(exports, module, {
-        configurable: true,
-        get() {
-            let definition = require(path);
-
-            Object.defineProperty(exports, module, {
-                value: definition
-            });
-
-            return definition;
-        }
-    });
-}
+function defineLazyLoader(e,m,p){Object.defineProperty(e,m,{configurable:true,get(){
+    let d=require(p);Object.defineProperty(e,m,{value:d});return d;}});}
 
 defineLazyLoader(module.exports, 'EventLog', './events/logger');
 defineLazyLoader(module.exports, 'mirror', './object/mirror');
