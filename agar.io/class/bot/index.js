@@ -23,17 +23,11 @@
 'use strict';
 
 const { utils: { mirror, merge }, config } = require('./../../');
+
 const { defineOptions, splitDistance,
     bot: { options: defaults } } = config;
 
 merge(this, require('./methods'));
-
-Object.defineProperty(Number.prototype, 'mod', {
-    value: function mod(n) {
-        return ((this % n) + n) % n;
-    }
-});
-
 
 class Bot {
     constructor(client) {
@@ -323,3 +317,9 @@ function getDistance(player, cell) {
         shift: player.size
     };
 }
+
+Object.defineProperty(Number.prototype, 'mod', {
+    value: function mod(n) {
+        return ((this % n) + n) % n;
+    }
+});

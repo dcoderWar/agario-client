@@ -4,10 +4,9 @@ const express      = require('express');
 const favicon      = require('serve-favicon');
 
 const tableify     = require('tableify');
-const { upTime }   = require('./agar.io/utils');
 const appData      = require('./package.json');
 
-const { Helper } = require('./agar.io');
+const { Helper, utils: { upTime } } = require('./agar.io');
 
 const app = express(), port = parseInt(process.env.PORT || 5000);
 app.set('port', port);
