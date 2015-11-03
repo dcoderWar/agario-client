@@ -6,7 +6,7 @@ const requiredArgs = '--harmony --harmony_destructuring --harmony_rest_parameter
 requiredArgs.split(' ').every(function checkProcess(arg) {
     let valid = process.execArgv.indexOf(arg) !== -1;
 
-    if (!valid) {
+    if (valid == false) {
         console.error((new Error('This package requires that you execute node with at ' +
             'least the following arguments: ' + requiredArgs + ['\nExpected:', process.argv[0],
                 requiredArgs, process.argv[1], process.argv.slice(2)].join(' '))).stack);
