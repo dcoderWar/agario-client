@@ -1,5 +1,6 @@
 'use strict';
 
+// See "agar.io/utils/index.js" for information about what "defineLazyLoader" does
 function defineLazyLoader(e,m,p){Object.defineProperty(e,m,{configurable:true,get(){
     let d=require(p);Object.defineProperty(e,m,{value:d});return d;}});}
 
