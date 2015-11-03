@@ -24,10 +24,7 @@
 
 module.exports = {
     isThreat,                       computeDistance,                computeDistanceFromCircleEdge,
-    compareSize,                    canSplit,                       isFood,
-    isVirus,                        isSplitTarget,                  getFood,
-    CellsIterator,                  getMaster,                      getPrey,
-    getThreats,                     getViruses,                     skipMine,
+    compareSize,                    canSplit,
     getCells,                       getFoodClusters,                getAngle,
     slopeFromAngle,                 pointsOnLine,                   followAngle,
     angleIsWithin,                  rangeToAngle,                   getEdgeLinesFromPoint,

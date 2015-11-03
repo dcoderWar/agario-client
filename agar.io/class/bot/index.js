@@ -31,14 +31,7 @@ merge(this, require('./methods'));
 
 class Bot {
     constructor(client) {
-        // Sanity Checks
-        if (client == null) throw new TypeError('Invalid constructor argument');
-        if (typeof(client.on) !== 'function')
-            throw new TypeError('Client doesn\'t appear to be an instance of EventEmitter');
-        if (client.cells == null || !Array.isArray(client.playerIDs))
-            throw new TypeError('Client doesn\'t have expected property values');
-
-
+        
         let updatePlayer = () =>
             this.player = this.client.cells[this.client.playerIDs[0]];
 

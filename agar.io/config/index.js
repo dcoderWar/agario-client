@@ -1,8 +1,5 @@
 'use strict';
 
-const unbind = Function.call.bind(Function.bind, Function.call);
-const toString = unbind(Object.prototype.toString);
-
 const config = module.exports = require('./config.json');
 
 module.exports.defineOptions = defineOptions;
@@ -22,6 +19,7 @@ function defineStrongOption(obj, opt, val) {
         get() { return val },
         set(value) {
             if (toString(value) === type) {
+                //noinspection JSUnusedAssignment
                 val = value;
             }
         }
