@@ -25,6 +25,14 @@
     });
 }());
 
+module.exports = {};
+defineLazyModuleGetter(module.exports, 'EventLog', './events/logger');
+defineLazyModuleGetter(module.exports, 'mirror', './object/mirror');
+defineLazyModuleGetter(module.exports, 'merge', './object/merge');
+defineLazyModuleGetter(module.exports, 'range', './range');
+defineLazyModuleGetter(module.exports, 'timer', './timer');
+defineLazyModuleGetter(module.exports, ['createUUID', 'upTime'], './misc');
+
 function defineLazyGetter(obj, name, getter) {
     Object.defineProperty(obj, name, {
         configurable: true,
@@ -65,10 +73,3 @@ function defineLazyModuleGetter(exports, symbols, path) {
         defineLazyGetter(exports, symbols, name => require(path));
     }
 }
-
-defineLazyModuleGetter(module.exports, 'EventLog', './events/logger');
-defineLazyModuleGetter(module.exports, 'mirror', './object/mirror');
-defineLazyModuleGetter(module.exports, 'merge', './object/merge');
-defineLazyModuleGetter(module.exports, 'range', './range');
-defineLazyModuleGetter(module.exports, 'timer', './timer');
-defineLazyModuleGetter(module.exports, ['createUUID', 'upTime'], './misc');
