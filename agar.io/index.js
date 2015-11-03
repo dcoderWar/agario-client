@@ -8,10 +8,12 @@ requiredArgs.split(' ').every(function checkProcess(arg) {
 
     if (valid == false) {
         console.error((new Error('This package requires that you execute node with at ' +
-            'least the following arguments: ' + requiredArgs + ['\nExpected:', process.argv[0],
-                requiredArgs, process.argv[1], process.argv.slice(2)].join(' '))).stack);
+            'least the following arguments: ' + requiredArgs + ['\nExpected:',
+            process.argv[0], requiredArgs, process.argv[1], process.argv.slice(2)].
+                join(' ') + '\n')).stack + '\n');
 
         try {
+            //noinspection JSUnresolvedFunction,NodeRequireContents
             require('v8').setFlagsFromString(requiredArgs);
         }
         catch (error) {
