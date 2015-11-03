@@ -6,7 +6,8 @@ const favicon      = require('serve-favicon');
 const tableify     = require('tableify');
 const appData      = require('./package.json');
 
-const { Helper, utils: { upTime } } = require('./agar.io');
+const agar = require('./agar.io');
+const Helper = agar.Helper, upTime = agar.utils.upTime;
 
 const app = express(), port = parseInt(process.env.PORT || 5000);
 app.set('port', port);
@@ -21,7 +22,7 @@ const header = '<!DOCTYPE html><html lang="en-US"><head>' +
     '<link rel="stylesheet" type="text/css" href="style.css"></head><body>';
 const footer = '</body></html>';
 
-app.get('/', (request, response) => {
+app.get('/', function (request, response) {
 
     appData.upTime = upTime();
     appData.lastJoin = new Date(helper.lastJoin);
@@ -48,13 +49,14 @@ app.get('/', (request, response) => {
 //noinspection JSUnresolvedFunction
 app.use(helper.middleware());
 
-app.listen(app.get('port'), () => console.log(helper.toString() + ' on port', app.get('port')));
+app.listen(app.get('port'), function (){ console.log(helper.toString() + ' on port', app.get('port')); });
 
 // Define listeners
-helper.on('server-request', attempts =>
-    helper.log('Requesting server in region ' + helper.session.region + ': attempt(s) ' + attempts));
+helper.on('server-request', function () {
+    helper.log('Requesting server in region ' + helper.session.region + ': attempt(s) ' + attempts)
+    });
 
-helper.on('connection-error', error => {
+helper.on('connection-error', function (error) {
     helper.log('Connection failed with reason: ' + error);
     helper.log('Server address set to: ' + helper.server + ' please check if this is correct and working address');
 });
