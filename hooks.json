@@ -1,5 +1,5 @@
 {
   "pre-commit": {
-    "esprima.hks": "0.0.0"
+    "esprima-es6.hks": "0.0.1"
   }
 }

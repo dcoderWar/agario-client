@@ -4,8 +4,8 @@
 const WebSocket = require('ws');
 
 // relative modules
-const Packet = require('./packet');
-const servers = require('./servers');
+const Packet = require('./lib/packet');
+const servers = require('./lib/servers');
 
 // classes, utils, and configuration
 const { utils, config } = require('./../../');

@@ -16,7 +16,7 @@ class EventLog extends EventEmitter {
 
         let emit = this.emit.bind(this);
 
-        forEach(range(this.minLevel, this.maxLevel), level => {
+        range(this.minLevel, this.maxLevel).forEach(level => {
             let method = level > this.minLevel ? 'emit_' + level : 'emit';
 
             if (this.debug >= level) {
