@@ -1,6 +1,6 @@
 'use strict';
 
-// Requires global owns
+// Requires global owns, needs optional type checking
 
 module.exports = mirror;
 
