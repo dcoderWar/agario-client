@@ -54,5 +54,4 @@ function range(start, end, step) {
     }
 
     return range;
-
 }
