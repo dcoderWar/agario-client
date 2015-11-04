@@ -1,5 +1,10 @@
 'use strict';
 
+if (require.main === module) {
+    console.error(new Error('Hmm... You probably want to require(\'agar.io\') from the main program'));
+    process.exit(1);
+}
+
 // https://nodejs.org/en/docs/es6/
 const requiredArgs = '--harmony --harmony_destructuring --harmony_rest_parameters';
 
