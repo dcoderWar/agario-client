@@ -31,7 +31,7 @@ requiredArgs.split(' ').every(function checkProcess(arg) {
 
 module.exports = { utils: require('./utils') };
 
-defineLazyModuleGetter(this, 'Helper', './class/helper');
-defineLazyModuleGetter(this, 'Bot', './class/bot');
-defineLazyModuleGetter(this, 'Client', './class/client');
-defineLazyModuleGetter(this, 'config', './config');
+defineLazyModuleGetter(require, module, 'Helper', './class/helper');
+defineLazyModuleGetter(require, module, 'Bot', './class/bot');
+defineLazyModuleGetter(require, module, 'Client', './class/client');
+defineLazyModuleGetter(require, module, 'config', './config');

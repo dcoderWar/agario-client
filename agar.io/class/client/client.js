@@ -2,6 +2,7 @@
 
 // npm modules
 const WebSocket = require('ws');
+const { EventEmitter } = require('events');
 
 // relative modules
 const Packet = require('./lib/packet');
@@ -642,5 +643,6 @@ Object.defineProperty(Client.prototype, 'processors', {
     }
 });
 
+console.log(new Client({}));
 Client.Cell = Cell;
 module.exports = Client;

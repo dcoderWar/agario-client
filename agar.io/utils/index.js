@@ -27,12 +27,12 @@
     });
 }());
 
-defineLazyModuleGetter(this, 'EventLog', './events/logger');
-defineLazyModuleGetter(this, 'mirror', './object/mirror');
-defineLazyModuleGetter(this, 'merge', './object/merge');
-defineLazyModuleGetter(this, 'range', './range');
-defineLazyModuleGetter(this, 'timer', './timer');
-defineLazyModuleGetter(this, ['createUUID', 'upTime'], './misc');
+defineLazyModuleGetter(require, module, 'EventLog', './events/logger');
+defineLazyModuleGetter(require, module, 'mirror', './object/mirror');
+defineLazyModuleGetter(require, module, 'merge', './object/merge');
+defineLazyModuleGetter(require, module, 'range', './range');
+defineLazyModuleGetter(require, module, 'timer', './timer');
+defineLazyModuleGetter(require, module, ['createUUID', 'upTime'], './misc');
 
 function defineLazyGetter(obj, name, getter) {
     Object.defineProperty(obj, name, {
@@ -53,16 +53,15 @@ function defineLazyGetter(obj, name, getter) {
     })
 }
 
-function defineLazyModuleGetter(module, symbols, path) {
-    let { exports, require } = module;
+function defineLazyModuleGetter(require, module, symbols, path) {
 
     if (Array.isArray(symbols)) {
-        symbols.forEach(symbol => defineLazyGetter(exports, symbol, name => {
+        symbols.forEach(symbol => defineLazyGetter(module.exports, symbol, name => {
             let definition = require(path);
 
             // The module has already been loaded at this point so all the other specified symbols get defined too
             symbols.forEach(symbol =>
-                Object.defineProperty(exports, symbol, {
+                Object.defineProperty(module.exports, symbol, {
                     configurable: true,
                     writable: true,
                     enumerable: true,
@@ -73,6 +72,6 @@ function defineLazyModuleGetter(module, symbols, path) {
         }));
     }
     else {
-        defineLazyGetter(exports, symbols, name => require(path));
+        defineLazyGetter(module.exports, symbols, name => require(path));
     }
 }

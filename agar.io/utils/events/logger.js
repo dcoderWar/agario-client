@@ -1,7 +1,7 @@
 'use strict';
 
 const { EventEmitter } = require('events');
-const { range } = require('../range');
+const range = require('../range');
 
 const { defineOptions,
     eventLog: { options: defaults } } = require('../../config');
