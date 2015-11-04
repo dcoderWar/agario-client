@@ -643,6 +643,5 @@ Object.defineProperty(Client.prototype, 'processors', {
     }
 });
 
-console.log(new Client({}));
 Client.Cell = Cell;
 module.exports = Client;

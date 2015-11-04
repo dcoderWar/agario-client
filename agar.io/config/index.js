@@ -44,13 +44,14 @@ config.updateOptions = updateOptions;
 const defineOption = config.weakOptions ? defineWeakOption : defineStrongOption;
 
 function defineWeakOption(obj, opt, value) {
-    Object.defineProperty(obj, opt, { value });
+    Object.defineProperty(obj, opt, { configurable: true, writable: true, value });
 }
 
 function defineStrongOption(obj, opt, val) {
     let type = toString(val);
 
     Object.defineProperty(obj, opt, {
+        configurable: true,
         get() { return val },
         set(value) {
             if (toString(value) === type) {
