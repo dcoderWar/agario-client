@@ -35,9 +35,9 @@ const config = module.exports = (function validateConfig() {
     return config;
 }());
 
-module.exports.defineOptions = defineOptions;
-module.exports.createOptions = createOptions;
-module.exports.updateOptions = updateOptions;
+config.defineOptions = defineOptions;
+config.createOptions = createOptions;
+config.updateOptions = updateOptions;
 
 const defineOption = config.weakOptions ? defineWeakOption : defineStrongOption;
 
