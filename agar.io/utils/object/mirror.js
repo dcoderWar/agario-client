@@ -1,5 +1,7 @@
 'use strict';
 
+// Requires global owns
+
 module.exports = mirror;
 
 function mirror(target, source, descriptors, weak) {
