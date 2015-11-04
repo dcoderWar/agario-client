@@ -1,5 +1,7 @@
 'use strict';
 
+// Requires global toString
+
 const config = module.exports = (function validateConfig() {
     let config, missing = [], example = {},
         required = ['client', 'bot', 'helper', 'eventLog'];
