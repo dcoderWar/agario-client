@@ -2,7 +2,7 @@
 
 /*
  WARNING:
-     Don't use the libraries in this directory directly, they might depend on the following globals.
+     Don't use the libraries in this directory directly, they might depend on globals.
      Instead require this file or the directory it resides in to access any of the exports
      All of the exports in this directory will be *require'd* on demand aka lazy loaded
 
