@@ -1,8 +1,8 @@
 {
-  "name": "agario-helper",
+  "name": "agario-helper-express",
   "version": "1.0.11",
-  "description": "agar.io suicide bot implementation",
-  "main": "agar.io/helper.js",
+  "description": "agar.io suicide bot implementation that uses express",
+  "main": "index.js",
   "dependencies": {
     "express": "5.0.0-alpha.2",
     "serve-favicon": "^2.3.0",
@@ -19,20 +19,20 @@
     "node-hooks": "0.0.15",
     "esprima-es6.hks": "0.0.1"
   },
+  "directories": [
+    "agar.io",
+    "public"
+  ],
   "files": [
-    "agar.io/helper.js",
-    "agar.io/bot.js",
-    "agar.io/client.js",
-    "agar.io/packet.js",
-    "agar.io/utils.js",
-    "agar.io/servers.js",
     "index.js",
     "app.json",
-    "public/favicon-32x32.png"
+    "Procfile"
   ],
   "scripts": {
     "start": "node --harmony --harmony_destructuring --harmony_rest_parameters index.js",
-    "install": "npm install --prefix ./agar.io/class/client; npm install --prefix ./agar.io/class/helper"
+    "install": "npm install --prefix ./agar.io/class/client; npm install --prefix ./agar.io/class/helper",
+    "postinstall": "node ./node_modules/node-hooks/bin/hooks install",
+    "preuninstall": "node ./node_modules/node-hooks/bin/hooks uninstall"
   },
   "keywords": [
     "agar.io",
